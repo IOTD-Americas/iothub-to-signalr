@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.1.2/dist/browser/signalr.js"></script>
+        <script>
+                console.log('test');
+                const connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:7071/api").build();
+
+                connection.on("iotMessage", function (messageFromIoTDevice) {
+                    var str = messageFromIoTDevice;
+                    var arreglo = str.split('|');
+                    var  mensajeText = 'Dispositivo: ' + arreglo[0] + ' Mensaje: ' + arreglo[1];
+                    if(document.getElementById(arreglo[0]) == null)
+                    {
+                        //document.write('<p id='+ arreglo[0] +'></p>');
+                        var newp = document.createElement('p');
+                        newp.setAttribute('id', arreglo[0]);
+                        newp.innerHTML = mensajeText;
+                        document.getElementById('pagina').appendChild(newp);
+                    }
+                    else
+                    {
+                        document.getElementById(arreglo[0]).innerHTML = mensajeText;
+                    }
+                    
+                });
+
+                connection.onclose(() => console.log('disconnected'));
+                console.log('connecting...');
+                connection.start()
+                  .catch(console.error);
+            
+        </script>
+    </head>
+    <body id='pagina'>
+        
+        <p id="message1"></p>
+        
+    </body>
+</html>
